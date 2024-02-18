@@ -1,33 +1,42 @@
-function getSeasonAlbumAvg(index,season){
+const getSeasonAlbumAvg = (index,season) => {
     let seasonColumns = season;
     let avgCol = seasonColumns[2];
     let selected
 
     avgCol.forEach((item, idx) =>{
       if(index === idx){
-        selected = item
+        selected = converToInteger(item);
       }
     });
 
     return selected
 }
 
-function getSeasonAlbumScores(index, position,season){
+const getSeasonAlbumScores = (index, position, season) => {
     let seasonColumns = season;
     let userCol = seasonColumns[position];
-    let selected;
+    let albumScore;
 
-    userCol.forEach((item, idx) =>{
+    userCol.forEach((score, idx) => {
         if(index === idx){
-        selected = item
+          albumScore = converToInteger(score);
         }
     });
 
-return selected
+    return albumScore;
 }
 
+const getSeasonNumber = (season) => {
+  let seasonNumber = season.replace('Season','');
+  return Number(seasonNumber)
+}
+
+const converToInteger = (item) => {
+  return item && item != '#DIV/0!' ? Number(item) : 0;
+}
 
 module.exports = {
     getSeasonAlbumAvg,
     getSeasonAlbumScores,
+    getSeasonNumber
 }

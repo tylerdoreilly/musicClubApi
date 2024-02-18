@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const {google} = require('googleapis');
+const { google } = require('googleapis');
 const app = express();
 const port = process.env.PORT || 3080;
 const utility = require('./utilities/formatText');
@@ -34,7 +34,7 @@ app.get('/api/albums/', async (request, response) => {
 
   // Get Spreadsheet Info
   const googleSheets = google.sheets({version: 'v4', auth:client})
-  const spreadsheetID = "1x0BNyTFsMlAmS3DYobETnWZbfcGk8r6JXP7daLUYDwI";
+  const spreadsheetID = "11a_VMSVADhkuhaVmdThNEpV4LZRXEFT7-9k2Wmj70ds";
 
   // Get All Sheets
   const getAllSheets = await googleSheets.spreadsheets.get({
@@ -104,7 +104,7 @@ app.get('/api/albums/', async (request, response) => {
       albums.artist = dataObj.artist;
       albums.album = dataObj.album;
       albums.by = dataObj.member;
-      albums.season = seasonNumber;
+      albums.season = seasonHelpers.getSeasonNumber(seasonNumber);
       albums.avg = seasonHelpers.getSeasonAlbumAvg(index, season);
       albums.matt = seasonHelpers.getSeasonAlbumScores(index,4, season);
       albums.bill = seasonHelpers.getSeasonAlbumScores(index,5, season);
