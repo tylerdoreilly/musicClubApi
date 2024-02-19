@@ -1,8 +1,9 @@
 const axios = require('axios');
+const { spotifyClientId, spotifyClientSecret } = require('../config');
 
-// Spotify Ids temp
-const SPOTIFY_CLIENT_ID = '51f1ae7a6d2945f982841188295d74bd';
-const SPOTIFY_CLIENT_SECRET = '900026f798a742d4b6333cb80a32b0c7';
+// Spotify Ids
+const SPOTIFY_CLIENT_ID = spotifyClientId;
+const SPOTIFY_CLIENT_SECRET = spotifyClientSecret;
 
 
 // Generate Spotify Auth Token

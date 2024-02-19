@@ -3,7 +3,8 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const { google } = require('googleapis');
 const app = express();
-const port = process.env.PORT || 3080;
+const { envPort, env, spreadsheetId } = require('./config');
+const port = process.env.PORT || envPort;
 const utility = require('./utilities/formatText');
 const seasonHelpers = require('./utilities/season-helpers');
 const albumControls = require("./controllers/album.controller.js");
@@ -17,6 +18,8 @@ app.use(
 
 app.use(express.static(path.join(__dirname, '../app/build')));
 
+
+console.log(`Your environment is ${env}`);
 
 ////////////////////////////////////////////////////////////////
 // Get Album Data
@@ -34,7 +37,8 @@ app.get('/api/albums/', async (request, response) => {
 
   // Get Spreadsheet Info
   const googleSheets = google.sheets({version: 'v4', auth:client})
-  const spreadsheetID = "11a_VMSVADhkuhaVmdThNEpV4LZRXEFT7-9k2Wmj70ds";
+  //const spreadsheetID = "11a_VMSVADhkuhaVmdThNEpV4LZRXEFT7-9k2Wmj70ds";
+  const spreadsheetID = spreadsheetId;
 
   // Get All Sheets
   const getAllSheets = await googleSheets.spreadsheets.get({
@@ -84,11 +88,11 @@ app.get('/api/albums/', async (request, response) => {
     return seasonAlbums 
   })
 
-  let test = [];
+  let collectAllData = [];
   seasonsData.forEach(items =>{
     items.shift();
     items.forEach(item =>{
-      test.push(item)
+      collectAllData.push(item)
     })
   })
 
@@ -120,7 +124,7 @@ app.get('/api/albums/', async (request, response) => {
    
   }
 
-   response.send(test)
+   response.send(collectAllData)
 })
 
 app.get('/api/album', async (request, response) => {

@@ -1,7 +1,8 @@
 const axios = require('axios');
+const { lastFMKey } = require('../config');
 
-//Temp lastFm key - move to env
-const lastFmApiKey='ea840f8b2593aebe7317b39734a186ba';
+//lastFm key
+const lastFmApiKey = lastFMKey;
 
 
 ///////////////////////////////////////

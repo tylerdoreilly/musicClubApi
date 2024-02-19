@@ -1,18 +1,19 @@
 {
-  "name": "cms",
+  "name": "Music App Api",
   "version": "1.0.0",
-  "description": "cms poc",
+  "description": "Music App Api poc",
   "main": "index.js",
   "scripts": {
     "start": "node server.bundle.js",
     "build": "webpack",
-    "dev": "nodemon ./index.js localhost 3080",
+    "dev": "node -r dotenv/config ./index.js localhost 3080",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "toreilly",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.6.7",
+    "dotenv": "^16.4.4",
     "express": "^4.18.2",
     "file-system": "^2.2.2",
     "pg": "^8.10.0",
