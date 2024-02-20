@@ -57,6 +57,38 @@ function splitString(string){
   return obj
 }
 
+function splitSongString(string){
+  let obj = {};
+  const regex = /(?<=\s)-(?=\s)/gm;
+  const subst = '#';
+  const result = string.replace(regex, subst);
+
+  let artist = string.replace(/".*"/g, '');
+  let song = result.substring(result.indexOf("#") + 1).trimStart();
+
+
+  if(artist.includes('-')){
+    artist = string.substring(0, artist.indexOf("-")).trimEnd();
+  }
+
+  if(song.includes('-')){
+    song = song.substring(song.indexOf("-") + 1).trimStart();
+  } 
+  
+  else if (song.indexOf('"')){
+    song = song.match(/(?:"[^"]*"|^[^"]*$)/)[0].replace(/"/g, "");
+  }
+
+  if(song.includes('"')){
+    song = song.replace(/['"]+/g, '');
+  }
+
+  obj.artist = artist;
+  obj.album = song
+
+  return obj
+}
+
 function formatAlbumDate(albumDate){
   // if(albumDate.includes('-')){
   //   return albumDate.substring(0, albumDate.indexOf("-")).trimEnd();
@@ -91,5 +123,6 @@ module.exports = {
   splitString,
   formatAlbumDate,
   formatAlbumTitle,
-  removeSpecialCharacters
+  removeSpecialCharacters,
+  splitSongString
 }

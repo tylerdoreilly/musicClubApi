@@ -8,6 +8,7 @@ const port = process.env.PORT || envPort;
 const utility = require('./utilities/formatText');
 const seasonHelpers = require('./utilities/season-helpers');
 const albumControls = require("./controllers/album.controller.js");
+const songControls = require("./controllers/song.controller.js");
 
 app.use(bodyParser.json())
 app.use(
@@ -18,13 +19,12 @@ app.use(
 
 app.use(express.static(path.join(__dirname, '../app/build')));
 
-
 console.log(`Your environment is ${env}`);
+
 
 ////////////////////////////////////////////////////////////////
 // Get Album Data
 ///////////////////////////////////////////////////////////////
-
 
 app.get('/api/albums/', async (request, response) => {
 
@@ -37,7 +37,6 @@ app.get('/api/albums/', async (request, response) => {
 
   // Get Spreadsheet Info
   const googleSheets = google.sheets({version: 'v4', auth:client})
-  //const spreadsheetID = "11a_VMSVADhkuhaVmdThNEpV4LZRXEFT7-9k2Wmj70ds";
   const spreadsheetID = spreadsheetId;
 
   // Get All Sheets
@@ -67,7 +66,7 @@ app.get('/api/albums/', async (request, response) => {
   }
 
   let allSeasons = getSeasonsList();
-
+  let collectAllData = [];
   let sheetsList = [];
   let range = "!A1:M50";
 
@@ -87,8 +86,7 @@ app.get('/api/albums/', async (request, response) => {
 
     return seasonAlbums 
   })
-
-  let collectAllData = [];
+ 
   seasonsData.forEach(items =>{
     items.shift();
     items.forEach(item =>{
@@ -124,7 +122,7 @@ app.get('/api/albums/', async (request, response) => {
    
   }
 
-   response.send(collectAllData)
+  response.send(collectAllData)
 })
 
 app.get('/api/album', async (request, response) => {
@@ -135,6 +133,83 @@ app.get('/api/album', async (request, response) => {
   const fromattedAlbumData = await albumControls.formatAlbumData(selectedArtist, selectedAlbum);
 
   response.send(fromattedAlbumData);
+})
+
+
+////////////////////////////////////////////////////////////////
+// Get Song Data
+///////////////////////////////////////////////////////////////
+
+app.get('/api/songs', async (request, response) => {
+
+  // Google Auth
+  const auth = new google.auth.GoogleAuth({
+    keyFile:"credentials.json",
+    scopes:'https://www.googleapis.com/auth/spreadsheets',
+  })
+  const client = await auth.getClient();
+
+  // Get Spreadsheet Info
+  const googleSheets = google.sheets({version: 'v4', auth:client})
+  const spreadsheetID = spreadsheetId;
+
+  // Get All Sheets
+  const getAllSheets = await googleSheets.spreadsheets.get({
+    auth: auth,
+    spreadsheetId:spreadsheetID
+  })
+
+  //Get All Seasons
+  function getSongsList(){
+    let brackets = [];
+  
+    getAllSheets.data.sheets.forEach(sheet =>{
+      let sheetTitle = sheet.properties.title;
+     
+      if(sheetTitle.includes("Bracketeering")){
+        let bracket = {};
+        bracket.title = sheet.properties.title;
+        bracket.value = sheet.properties.title.toLowerCase().replace(/\s/g, "");
+        bracket.sheetId = sheet.properties.sheetId;
+        brackets.push(bracket) 
+      }    
+      
+    })
+
+    return brackets
+  }
+
+  let allBrackets = getSongsList();
+
+  let sheetsList = [];
+  let range = "!B1:B400";
+
+  allBrackets.forEach(bracket =>{
+    sheetsList.push(bracket.title + range)
+  })
+
+  let bracketsAllData = await googleSheets.spreadsheets.values.batchGet({
+    auth:auth,
+    spreadsheetId: spreadsheetID,
+    ranges: sheetsList,
+    majorDimension: "COLUMNS",   
+  })
+
+  const bracketsData = bracketsAllData.data.valueRanges.map((bracket, index) =>{
+    let bracketSongs = songControls.formatBracket(bracket.values, index);
+    return bracketSongs
+  })
+
+  console.log('bracketsData',bracketsData)
+  let collectAllData = [];
+  
+  bracketsData.forEach(items =>{
+    items.forEach(item =>{
+      collectAllData.push(item)
+    })
+  })
+
+  response.send(collectAllData)
 })
 
 
