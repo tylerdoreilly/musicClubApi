@@ -1,8 +1,10 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const { google } = require('googleapis');
 const app = express();
+app.use(cors());
 const { envPort, env, spreadsheetId } = require('./config');
 const port = process.env.PORT || envPort;
 const utility = require('./utilities/formatText');
