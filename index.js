@@ -110,10 +110,10 @@ app.get('/api/albums/', async (request, response) => {
       albums.avg = seasonHelpers.getSeasonAlbumAvg(index, season);
       albums.matt = seasonHelpers.getSeasonAlbumScores(index,4, season);
       albums.bill = seasonHelpers.getSeasonAlbumScores(index,5, season);
-      albums.dan = seasonHelpers.getSeasonAlbumScores(index,6, season);
+      albums.dwayne = (seasonNumber != 'Season 1' && seasonNumber != 'Season 2') ? seasonHelpers.getSeasonAlbumScores(index,6, season) : seasonHelpers.getSeasonAlbumScores(index,9, season);
       albums.ty = seasonHelpers.getSeasonAlbumScores(index,7, season);
       albums.joel = seasonHelpers.getSeasonAlbumScores(index,8, season);
-      albums.dwayne = seasonHelpers.getSeasonAlbumScores(index,9, season);
+      albums.dan = (seasonNumber != 'Season 1' && seasonNumber != 'Season 2') ? seasonHelpers.getSeasonAlbumScores(index,9, season) : seasonHelpers.getSeasonAlbumScores(index,6, season) ;
       albums.joe = seasonHelpers.getSeasonAlbumScores(index,10, season);
       albums.bart = seasonHelpers.getSeasonAlbumScores(index,11, season);
       albums.kris = seasonNumber != 'Season 1' ? seasonHelpers.getSeasonAlbumScores(index,12, season) : null;
