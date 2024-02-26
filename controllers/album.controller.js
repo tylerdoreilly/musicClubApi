@@ -47,13 +47,24 @@ if(selectedAlbum != null){
 
     const audioDb = await albumSources.getAudioDbAlbum(artist, album)
     let audioDbData = audioDb.data.album
+    let wikiId = audioDbData[0].strWikidataID
+
+    const fuck = audioDbData[0].strWikidataID ? await albumSources.getWikiData(wikiId) : [];
+    let wikiData = fuck.data.entities
+    // if(audioDbData[0].strWikidataID){
+    //     let id = audioDbData[0].strWikidataID
+    //     const fuck = await albumSources.getWikiData(id)
+    //     console.log('fuck',fuck.data)
+    // }
+
 
     let collectedAlbumData = {
     ...spotifyAlbum,
     tracklist: tracklist,
     lastFm: lastFMData ? lastFMData : [],
     musicBrainz: musicBrainzData ? musicBrainzData : [],
-    audioDb: audioDbData ? audioDbData : []
+    audioDb: audioDbData ? audioDbData : [],
+    wikiData: wikiData ? wikiData : []
     };
 
     return collectedAlbumData;

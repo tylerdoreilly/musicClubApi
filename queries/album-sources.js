@@ -22,8 +22,7 @@ const getMusicBrainz = async (mbId) => {
       
       return error.response;
     }
-  
-      
+
 };
    
   
@@ -55,8 +54,30 @@ const getLastFmData = async (artistName, albumName ) => {
 return response
 };
 
+const getLastFmTopTags = async (artistName, albumName ) => {
+  const response = axios.get(`http://ws.audioscrobbler.com/2.0/?method=album.gettoptags&api_key=${lastFmApiKey}&artist=${artistName}&album=${albumName}&format=json`, {   
+  headers:{
+  "contentType": "application/json",
+  },
+})
+
+return response
+};
+
+const getWikiData = async (id) => {
+  const response = axios.get(`http://www.wikidata.org/w/api.php?action=wbgetentities&ids=${id}&format=json&origin=*`, {   
+  headers:{
+  "contentType": "application/json",
+  },
+})
+
+return response
+};
+
 module.exports = {
     getMusicBrainz,
     getAudioDbAlbum,
-    getLastFmData
+    getLastFmData,
+    getLastFmTopTags,
+    getWikiData
 }
