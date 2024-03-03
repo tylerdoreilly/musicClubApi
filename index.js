@@ -228,7 +228,7 @@ app.get('/api/songs', async (request, response) => {
 // Schedule Get Albums
 ///////////////////////////////////////////////////////////////
 
-const scheduledTask = schedule.scheduleJob('*/1 * * * *', async () => {
+const scheduledTask = schedule.scheduleJob('* 4 * * *', async () => {
   const albumData = await getAlbums();
   writeToFile(albumData)
   console.log('Task executed every dat at 2AM:', new Date().toLocaleTimeString());
