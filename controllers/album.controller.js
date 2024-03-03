@@ -11,7 +11,7 @@ async function formatAlbumData(selectedArtist, selectedAlbum){
     albumDetails = await getAllData(selectedArtist, selectedAlbum, spotifyToken, searchType);
 
     if(Object.keys(albumDetails).length === 0){
-      console.log('true')
+      //console.log('true')
       searchType = 'album'
       albumDetails = await getAllData(selectedArtist, selectedAlbum, spotifyToken, searchType);
       return albumDetails;
@@ -24,6 +24,8 @@ async function formatAlbumData(selectedArtist, selectedAlbum){
 
 async function getAllData(artist, album, token, searchType){
 let musicBrainzData
+let discogsMasterData
+let discogsReleaseData
 
 const spotifyAlbums = await handleSpotifySearch(artist, album, token, searchType);
 let albumsList = spotifyAlbums
@@ -41,32 +43,39 @@ if(selectedAlbum != null){
     let mbId = lastFMData.mbid
 
     if(mbId){
-    const musicBrainz = await albumSources.getMusicBrainz(mbId)
-    musicBrainzData = musicBrainz.data
+        const musicBrainz = await albumSources.getMusicBrainz(mbId)
+        musicBrainzData = musicBrainz.data
     }
 
-    const audioDb = await albumSources.getAudioDbAlbum(artist, album)
-   
+    const audioDb = await albumSources.getAudioDbAlbum(artist, album)  
     let audioDbData = audioDb.data.album
-    console.log('audioDbData', audioDbData)
-    //let wikiId = audioDbData[0].strWikidataID
+    let discogsId = audioDbData ? audioDbData[0].strDiscogsID : null;
+    console.log('discogsId', audioDbData)
 
-    // const fuck = audioDbData[0].strWikidataID ? await albumSources.getWikiData(wikiId) : [];
-    // let wikiData = fuck.data.entities
-    // if(audioDbData[0].strWikidataID){
-    //     let id = audioDbData[0].strWikidataID
-    //     const fuck = await albumSources.getWikiData(id)
-    //     console.log('fuck',fuck.data)
-    // }
-
-
+    if(discogsId){
+        const discogsData = await albumSources.getDiscogsMaster(discogsId);
+        discogsMasterData = discogsData.data
+        const releaseId = discogsMasterData.main_release
+        const discogsRelease = await albumSources.getDiscogsRelease(releaseId);
+        discogsReleaseData = discogsRelease.data
+    } else {
+        const discogs = await albumSources.searchDiscogs(artist, album)
+        let discogsDataId = discogs.data.results[0].master_id;
+        const discogsData = await albumSources.getDiscogsMaster(discogsDataId)
+        discogsMasterData = discogsData.data
+        const releaseId = discogsMasterData.main_release
+        const discogsRelease = await albumSources.getDiscogsRelease(releaseId);
+        discogsReleaseData = discogsRelease.data
+    }
+ 
     let collectedAlbumData = {
-    ...spotifyAlbum,
-    tracklist: tracklist,
-    lastFm: lastFMData ? lastFMData : [],
-    musicBrainz: musicBrainzData ? musicBrainzData : [],
-    audioDb: audioDbData ? audioDbData : [],
-    //wikiData: wikiData ? wikiData : []
+        ...spotifyAlbum,
+        tracklist: tracklist,
+        lastFm: lastFMData ? lastFMData : [],
+        musicBrainz: musicBrainzData ? musicBrainzData : [],
+        audioDb: audioDbData ? audioDbData : [],
+        discogsMaster: discogsMasterData ? discogsMasterData : [],
+        discogsRelease: discogsReleaseData ? discogsReleaseData : []
     };
 
     return collectedAlbumData;
@@ -78,7 +87,7 @@ if(selectedAlbum != null){
 }
 
 async function handleSpotifySearch(artist, album, token, searchType){
-console.log('artist',artist)
+//console.log('artist',artist)
 
 if (searchType == 'artist') {
     const spotifyArtist = await spotifyQueries.spotifySearchArtists(artist, token);
@@ -102,7 +111,7 @@ if (searchType == 'artist') {
 async function handleReverseSearch(album, artist, token){
 const spotifyAlbums = await spotifyQueries.spotifySearchAlbums(album, token);
 let data = spotifyAlbums.data.albums.items;
-console.log('data',data)
+//console.log('data',data)
 let spotifyArtistId;
 
 data.forEach(item =>{
@@ -110,7 +119,7 @@ data.forEach(item =>{
 
     if (spotifyArtist == artist){       
     spotifyArtistId = item.artists[0].id;
-    console.log('selected artist',{name: spotifyArtist, id:spotifyArtistId})
+    //console.log('selected artist',{name: spotifyArtist, id:spotifyArtistId})
     }
 });
 

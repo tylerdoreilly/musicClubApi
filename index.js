@@ -131,7 +131,8 @@ console.log(`Your environment is ${env}`);
 // })
 
 app.get('/api/albums/', async (request, response) => {
-  const albumsData = readFromFile();
+  //const albumsData = await getAlbums();
+  const albumsData = await readFromFile();
   response.send(albumsData)
 })
 
@@ -227,7 +228,7 @@ app.get('/api/songs', async (request, response) => {
 // Schedule Get Albums
 ///////////////////////////////////////////////////////////////
 
-const scheduledTask = schedule.scheduleJob('0 2 * * *', async () => {
+const scheduledTask = schedule.scheduleJob('*/1 * * * *', async () => {
   const albumData = await getAlbums();
   writeToFile(albumData)
   console.log('Task executed every dat at 2AM:', new Date().toLocaleTimeString());
@@ -242,7 +243,7 @@ const writeToFile = (data) =>{
   );
 }
 
-const readFromFile = () =>{
+const readFromFile = async () =>{
   let rawdata = fs.readFileSync('json/albums.json');
   let albums = JSON.parse(rawdata);
   return albums

@@ -74,10 +74,48 @@ const getWikiData = async (id) => {
 return response
 };
 
+/////////////////////////////////////////////////
+// Discogs Data
+const searchDiscogs = async (artistName, albumName ) => {
+  const response = axios.get(`https://api.discogs.com/database/search?release_title=${albumName}&artist=${artistName}&per_page=3&page=1`, {   
+    headers:{
+    "contentType": "application/json",
+    'Authorization':'Discogs key=WyjWetuEyBteuiyCywsC, secret=ekbVQoJtxUSgqueJYtJUfEoqjJezrUmj'
+    },
+  })
+
+  return response
+};
+
+const getDiscogsMaster = async ( discogsId ) => {
+  const response = axios.get(`https://api.discogs.com/masters/${discogsId}`, {   
+    headers:{
+    "contentType": "application/json",
+    'Authorization':'Discogs key=WyjWetuEyBteuiyCywsC, secret=ekbVQoJtxUSgqueJYtJUfEoqjJezrUmj'
+    },
+  })
+  return response
+};
+
+const getDiscogsRelease = async ( releaseId ) => {
+  const response = axios.get(`https://api.discogs.com/releases/${releaseId}`, {   
+    headers:{
+    "contentType": "application/json",
+    'Authorization':'Discogs key=WyjWetuEyBteuiyCywsC, secret=ekbVQoJtxUSgqueJYtJUfEoqjJezrUmj'
+    },
+  })
+
+  return response
+};
+
+
 module.exports = {
     getMusicBrainz,
     getAudioDbAlbum,
     getLastFmData,
     getLastFmTopTags,
-    getWikiData
+    getWikiData,
+    getDiscogsMaster,
+    getDiscogsRelease,
+    searchDiscogs
 }

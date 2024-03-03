@@ -98,7 +98,7 @@ const getAlbums = async () =>{
     })
    
   }
-  console.log('collectAllData',collectAllData)
+ // console.log('collectAllData',collectAllData)
   return collectAllData
 }
 
